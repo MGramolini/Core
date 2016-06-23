@@ -96,6 +96,9 @@ limitations under the License.
 	<Target Name="ClickToBuild" DependsOnTargets="RebuildAll;_PreparePackage">
 		<RemoveDir Directories="$(OutputPath)" />
 	</Target>
+	<Target Name="FullBuildAndPackage" DependsOnTargets="BuildProject;PackageNoTestKeepDirectory">
+		<RemoveDir Directories="$(OutputPath)" />
+	</Target>
 
 	<Target Name="CleanAll">
 		<Message Text="Building Solution: $(SolutionPath)" Importance="high"/>
@@ -153,32 +156,60 @@ limitations under the License.
 		<RemoveDir Directories="$(PackageDir)" ContinueOnError="true" />
 
 	</Target>
+	
+	<Target
+		Name="PackageNoTestKeepDirectory"
+		DependsOnTargets="_PreparePackage"
+		>
+
+		<CreateProperty Value="$(ProjectName)-$(BuildConfigKey)-$(Project_Major).$(Project_Minor).$(Project_Build).$(Build_Number).zip" Condition="'$(Build_ZipFile)' == ''">
+			<Output PropertyName="Build_ZipFile" TaskParameter="Value"/>
+		</CreateProperty>
+		<CreateProperty Value="$(OutputPath)../$(Build_ZipFile)" Condition="'$(Build_ZipFilePath)' == ''">
+			<Output PropertyName="Build_ZipFilePath" TaskParameter="Value"/>
+		</CreateProperty>
+
+		<Message Importance="high" Text="Creating ZIP file $(Build_ZipFilePath)"/>
+
+		<CreateItem Include="$(PackageDir)\**\*.*" Exclude="$(PackageDir)\**\*Tests*">
+			<Output ItemName="FilesToPackage" TaskParameter="Include" />
+		</CreateItem>
+
+		<Zip
+			Files="@(FilesToPackage)"
+			ZipLevel="6"
+			WorkingDirectory="$(PackageDir)"
+			ZipFileName="$(Build_ZipFilePath)"
+			/>
+
+		<Message Text="##teamcity[publishArtifacts '$(Build_ZipFilePath)']" Condition="$(TEAMCITY_VERSION) != ''" />
+	</Target>
 
 	<Target
 		Name="NuSpec"
 		>
-
+		
 		<CreateProperty Value="$(BuildPath)/NuSpec">
 			<Output PropertyName="NuSpecDir" TaskParameter="Value"/>
 		</CreateProperty>
-
-		<MakeDir Directories="$(NuSpecDir)/lib/NET35" />
-		<MakeDir Directories="$(NuSpecDir)/lib/NET40cp" />
-		<MakeDir Directories="$(NuSpecDir)/lib/SL4" />
 
 		<CreateProperty Value="$(NuSpecDir)/$(ProjectName).nuspec">
 			<Output PropertyName="NuSpecFile" TaskParameter="Value"/>
 		</CreateProperty>
 
-		<Copy SourceFiles="nuspec.tmpl" DestinationFiles="$(NuSpecFile)" />
+		<Copy SourceFiles="nuspecWithFiles.tmpl" DestinationFiles="$(NuSpecFile)" />
 		<FileUpdate Files="$(NuSpecFile)" Regex="\$\(Id\)" ReplacementText="$(ProjectName)" />
 		<FileUpdate Files="$(NuSpecFile)" Regex="\$\(Version\)" ReplacementText="$(Project_Major).$(Project_Minor).$(Project_Build)" />
 		<FileUpdate Files="$(NuSpecFile)" Regex="\$\(Title\)" ReplacementText="$(ProjectName)" />
 		<FileUpdate Files="$(NuSpecFile)" Regex="\$\(Description\)" ReplacementText="DynamicProxy, Logging, and Dictionary Adapter components" />
 		<FileUpdate Files="$(NuSpecFile)" Regex="\$\(Summary\)" ReplacementText="Castle Project core components" />
-		<FileUpdate Files="$(NuSpecFile)" Regex="\$\(IconUrl\)" ReplacementText="http://www.castleproject.org/images/cp_logo32.png" />
-		<FileUpdate Files="$(NuSpecFile)" Regex="\$\(Modified\)" ReplacementText='$([System.DateTime]::UtcNow.ToString(""s""))Z' />
+		<FileUpdate Files="$(NuSpecFile)" Regex="\$\(IconUrl\)" ReplacementText="http://www.castleproject.org/img/castle-logo.png" />
 
+	</Target>
+
+	<Target Name="NuGetPackage" DependsOnTargets="NuSpec">
+		<Exec WorkingDirectory="$(NuSpecDir)"
+				Command="$(ToolsPath)\NuGet.exe pack $(NuSpecFile) -o $(NuSpecDir) -Verbosity detailed -NoDefaultExcludes" />
 	</Target>
 
 	<!--

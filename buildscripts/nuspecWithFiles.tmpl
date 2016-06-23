@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+		<id>$(Id)</id>
+		<version>$(Version)</version>
+		<title>$(Title)</title>
+		<authors>Castle Project Contributors</authors>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>$(Description)</description>
+		<summary>$(Summary)</summary>
+		<language>en-US</language>
+		<projectUrl>http://www.castleproject.org/</projectUrl>
+		<licenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseUrl>
+		<iconUrl>$(IconUrl)</iconUrl>
+		<tags>castle dynamicproxy dynamic proxy dynamicproxy2 dictionaryadapter emailsender</tags>
+	</metadata>
+	<files>
+		<file src="..\NET45\NET45-Release\pkg\ReleaseNotes\BreakingChanges.txt" />
+		<file src="..\NET45\NET45-Release\pkg\ReleaseNotes\Changes.txt" />
+		<file src="..\NET45\NET45-Release\pkg\ReleaseNotes\License.txt" />
+		<file src="..\NET35\NET35-Release\pkg\bin\$(Id).dll" target="lib/net35" />
+		<file src="..\NET35\NET35-Release\pkg\bin\$(Id).pdb" target="lib/net35" />
+		<file src="..\NET35\NET35-Release\pkg\bin\$(Id).xml" target="lib/net35" />
+		<file src="..\NET40\NET40-Release\pkg\bin\$(Id).dll" target="lib/net40-client" />
+		<file src="..\NET40\NET40-Release\pkg\bin\$(Id).pdb" target="lib/net40-client" />
+		<file src="..\NET40\NET40-Release\pkg\bin\$(Id).xml" target="lib/net40-client" />
+		<file src="..\NET45\NET45-Release\pkg\bin\$(Id).dll" target="lib/net45" />
+		<file src="..\NET45\NET45-Release\pkg\bin\$(Id).pdb" target="lib/net45" />
+		<file src="..\NET45\NET45-Release\pkg\bin\$(Id).xml" target="lib/net45" />
+		<!--<file src="..\SL4\SL4-Release\pkg\bin\$(Id).dll" target="lib/sl4" />
+		<file src="..\SL4\SL4-Release\pkg\bin\$(Id).pdb" target="lib/sl4" />
+		<file src="..\SL4\SL4-Release\pkg\bin\$(Id).xml" target="lib/sl4" />
+		<file src="..\SL5\SL5-Release\pkg\bin\$(Id).dll" target="lib/sl5" />
+		<file src="..\SL5\SL5-Release\pkg\bin\$(Id).pdb" target="lib/sl5" />
+		<file src="..\SL5\SL5-Release\pkg\bin\$(Id).xml" target="lib/sl5" />-->
+		<file src="..\NET45\NET45-Release\pkg\ASL - Apache Software Foundation License.txt" />
+		<file src="..\NET45\NET45-Release\pkg\readme.txt" />
+		<file src="..\..\src\$(Id)\**.cs" target="src" />
+	</files>
+</package>
